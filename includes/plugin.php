@@ -44,6 +44,9 @@ final class Plugin
      */
     private static $_instance = null;
 
+
+    private $cf7_service_instance = null;
+
     /**
      * Instance
      *
@@ -200,6 +203,11 @@ final class Plugin
      */
     public function init()
     {
+        require_once plugin_dir_path(__FILE__) . '/service.php';
+
+        $this->cf7_service_instance = \Nonaki\Services\WP\Nonaki_Cf7_Service::get_instance();
+
+
         if (defined('WPCF7_PLUGIN')) {
             add_filter('nonaki_template_types', function ($types) {
                 $types['cf7'] = 'Contact Form 7';
@@ -226,12 +234,18 @@ final class Plugin
             });
 
             add_action('wpcf7_before_send_mail', [$this, 'email_template']);
+
+            // add_action('nonaki_editor_scripts', function ($template_id, $type, $sub_type) {
+            //     $this->cf7_service_instance->add_elements($template_id, $type, $sub_type);
+            // }, 10, 3);
         }
     }
 
     public function email_template($contact_form)
     {
-        error_log(print_r($contact_form, true));
+        // error_log(print_r($contact_form->id(), true));
+        error_log(print_r($this->cf7_service_instance->get_template($contact_form->id()), true));
+        // $this->cf7_service_instance->get_template($contact_form->id());
         // $email = $contact_form->prop('mail');
         // $email2 = $contact_form->prop('mail_2');
         // $body = $email['body'];
