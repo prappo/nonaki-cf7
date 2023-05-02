@@ -239,6 +239,18 @@ final class Plugin
             add_action('nonaki_editor_scripts', function ($template_id, $type, $sub_type) {
                 $this->cf7_service_instance->add_elements($template_id, $type, $sub_type);
             }, 10, 3);
+
+            $cf7_template_type = [
+                'type' => 'CF7',
+                'title' => 'CF7 email template',
+                'description' => 'Create email tempalte for Contact form 7',
+                'icon' => NONAKI_CF7_ASSETS_URL . '/cf7_icon.svg',
+                'url' => admin_url('post-new.php?post_type=nonaki&type=cf7')
+            ];
+            add_filter('nonaki_templates', function ($templates) use ($cf7_template_type) {
+                array_push($templates, $cf7_template_type);
+                return $templates;
+            });
         }
     }
 

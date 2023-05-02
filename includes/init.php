@@ -37,6 +37,10 @@ class Init
     {
         $forms = [];
 
+        if (!class_exists('WPCF7_ContactForm')) {
+            return $forms;
+        }
+
         $args = [
             'post_type' => 'wpcf7_contact_form',
             'posts_per_page' => -1,

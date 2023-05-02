@@ -15,6 +15,10 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
+
+define('NONAKI_CF7_URL', plugin_dir_url(__FILE__));
+define('NONAKI_CF7_ASSETS_URL', NONAKI_CF7_URL . '/assets');
+
 function nonaki_cf7_addon()
 {
 
