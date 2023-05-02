@@ -7,55 +7,41 @@ class Nonaki_Cf7_Service
 {
     use Base;
 
-    public function filter($message, $template_content)
+
+    private function get_form_fields($form_id)
     {
-        $filters = [
-            '{content}' => $message,
-        ];
-
-        return strtr($template_content, $filters);
+        $forms = get_option('nonaki_addon_cf7_forms');
+        if ($forms) {
+            foreach ($forms as $form) {
+                if ((int)$form['id'] === (int)$form_id) {
+                    return $form['fields'];
+                }
+            }
+        }
+        return [];
     }
-
-
 
     public function add_elements($template_id, $type, $sub_type)
     {
         if ($type == 'cf7') {
-            $form_id = 20; // Replace with your form ID
-            $form = \WPCF7_ContactForm::get_instance($form_id);
-
-            $tags = $form->collect_mail_tags();
-
-            error_log(print_r($tags, true));
-
-
+            foreach ($this->get_form_fields($sub_type) as $field) {
 ?>
-            <script type="module">
-                var blockManager = nonaki.BlockManager;
+                <script type="module">
+                    var blockManager = nonaki.BlockManager;
 
-                blockManager.add('cf7-user-to', {
-                    category: 'Contact Form 7',
-                    label: `New User Email`,
-                    editable: true,
-                    attributes: {
-                        class: 'fa fa-envelope',
-                    },
-                    content: `<mj-text>{{to}}</mj-text>`,
+                    blockManager.add('cf7-<?php echo esc_html($field['id']) ?>', {
+                        category: 'Contact Form 7',
+                        label: `<?php echo esc_html($field['id']) ?>`,
+                        editable: true,
+                        attributes: {
+                            class: 'fa fa-envelope',
+                        },
+                        content: `<mj-text><?php echo esc_html($field['label']) ?></mj-text>`,
 
-                });
-
-                blockManager.add('cf7-user-first-name', {
-                    category: 'Contact Form 7',
-                    label: `First Name`,
-                    editable: true,
-                    attributes: {
-                        class: 'fa fa-user',
-                    },
-                    content: `<mj-text>{{first_name}}</mj-text>`,
-
-                });
-            </script>
+                    });
+                </script>
 <?php
+            }
         }
     }
 
@@ -89,28 +75,15 @@ class Nonaki_Cf7_Service
             foreach ($query->posts as $post) {
                 $form_id_for_template = get_post_meta($post->ID, 'template_sub_type', true);
 
-                if ((int) $form_id === (int) $form_id_for_template) {
-
+                if ($form_id ===  $form_id_for_template) {
                     return  get_post_meta($post->ID, 'compiled_content', true);
                 }
             }
         }
 
+        wp_reset_query();
+        wp_reset_postdata();
+
         return null;
-    }
-
-    public static function filter_message($args, $user, $blogname)
-    {
-
-        $filtered_message = strtr(self::get_template(), [
-            '{{to}}' => $args['to'],
-            '{{content}}' => $args['message'],
-            '{{first_name}}' => $user->first_name,
-            '{{last_name}}' => $user->last_name,
-            '{{site_url}}' => $blogname,
-
-        ]);
-        $args['message'] = $filtered_message;
-        return $args;
     }
 }

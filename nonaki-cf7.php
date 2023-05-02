@@ -24,4 +24,14 @@ function nonaki_cf7_addon()
     // Run the plugin
     \Nonaki_Addon\Plugin::instance();
 }
+
+function nonaki_cf7_addon_init()
+{
+    // Load init file
+    require_once(__DIR__ . '/includes/init.php');
+
+    \Nonaki_Addon\Init::instance();
+}
+
 add_action('plugins_loaded', 'nonaki_cf7_addon');
+add_action('wp', 'nonaki_cf7_addon_init');

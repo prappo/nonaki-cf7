@@ -222,7 +222,8 @@ final class Plugin
                 ));
 
                 foreach ($forms as $form) {
-                    $args['cf7'][$form->ID] = $form->post_title;
+                    $args['cf7'][$form->ID . '_mail'] = $form->post_title . ' [Mail]';
+                    $args['cf7'][$form->ID . '_mail2'] = $form->post_title . ' [Mail (2)]';
                 }
 
                 return $args;
@@ -235,26 +236,27 @@ final class Plugin
 
             add_action('wpcf7_before_send_mail', [$this, 'email_template']);
 
-            // add_action('nonaki_editor_scripts', function ($template_id, $type, $sub_type) {
-            //     $this->cf7_service_instance->add_elements($template_id, $type, $sub_type);
-            // }, 10, 3);
+            add_action('nonaki_editor_scripts', function ($template_id, $type, $sub_type) {
+                $this->cf7_service_instance->add_elements($template_id, $type, $sub_type);
+            }, 10, 3);
         }
     }
 
     public function email_template($contact_form)
     {
-        // error_log(print_r($contact_form->id(), true));
-        error_log(print_r($this->cf7_service_instance->get_template($contact_form->id()), true));
-        // $this->cf7_service_instance->get_template($contact_form->id());
-        // $email = $contact_form->prop('mail');
-        // $email2 = $contact_form->prop('mail_2');
-        // $body = $email['body'];
+        $email = $contact_form->prop('mail');
+        $email2 = $contact_form->prop('mail_2');
 
+        $mail_content = $this->cf7_service_instance->get_template($contact_form->id() . '_mail');
+        if ($mail_content) {
+            $email['body'] = $mail_content;
+            $contact_form->set_properties(array('mail' => $email));
+        }
 
-        // $email['body'] = 'hello world [your-email]';
-        // $email2['body'] = 'auto response [your-email]';
-
-        // $contact_form->set_properties(array('mail' => $email));
-        // $contact_form->set_properties(array('mail_2' => $email2));
+        $mail2_content = $this->cf7_service_instance->get_template($contact_form->id() . '_mail2');
+        if ($mail2_content) {
+            $email2['body'] = $mail2_content;
+            $contact_form->set_properties(array('mail_2' => $email2));
+        }
     }
 }
