@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
  *
  * @since 1.0.0
  */
-final class Plugin
+final class Cf7
 {
 
     /**
