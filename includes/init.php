@@ -2,7 +2,7 @@
 
 namespace Nonaki_Addon;
 
-class Init
+class Cf7_Init
 {
     /**
      * Instance
