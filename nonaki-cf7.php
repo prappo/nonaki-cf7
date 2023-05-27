@@ -26,7 +26,7 @@ function nonaki_cf7_addon()
     require_once(__DIR__ . '/includes/plugin.php');
 
     // Run the plugin
-    \Nonaki_Addon\Plugin::instance();
+    \Nonaki_Addon\Cf7::instance();
 }
 
 function nonaki_cf7_addon_init()
