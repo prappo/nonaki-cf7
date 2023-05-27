@@ -34,7 +34,7 @@ function nonaki_cf7_addon_init()
     // Load init file
     require_once(__DIR__ . '/includes/init.php');
 
-    \Nonaki_Addon\Init::instance();
+    \Nonaki_Addon\Cf7_Init::instance();
 }
 
 add_action('plugins_loaded', 'nonaki_cf7_addon');
